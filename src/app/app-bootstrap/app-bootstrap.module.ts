@@ -1,17 +1,19 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
-import { BsDropdownModule } from "ngx-bootstrap/dropdown";
-import { TooltipModule } from "ngx-bootstrap/tooltip";
-import { ModalModule } from "ngx-bootstrap/modal";
+import {
+  NgbDropdownModule,
+  NgbTooltipModule,
+  NgbModalModule
+} from "@ng-bootstrap/ng-bootstrap";
 
 @NgModule({
   imports: [
     CommonModule,
-    BsDropdownModule.forRoot(),
-    TooltipModule.forRoot(),
-    ModalModule.forRoot()
+    NgbDropdownModule.forRoot(),
+    NgbTooltipModule.forRoot(),
+    NgbModalModule.forRoot()
   ],
-  exports: [BsDropdownModule, TooltipModule, ModalModule]
+  exports: [NgbDropdownModule, NgbTooltipModule, NgbModalModule]
 })
 export class AppBootstrapModule {}

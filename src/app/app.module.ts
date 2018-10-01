@@ -6,11 +6,13 @@ import { ChannelsComponent } from "./channels/channels.component";
 
 import { AppRoutingModule } from "./app-routing.module";
 import { GateComponent } from "./gate/gate.component";
-// import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { AppBootstrapModule } from "./app-bootstrap/app-bootstrap.module";
+import { UserComponent } from './user/user.component';
+import { SettingComponent } from './setting/setting.component';
+import { FriendsComponent } from './friends/friends.component';
 
 @NgModule({
-  declarations: [AppComponent, ChannelsComponent, GateComponent],
+  declarations: [AppComponent, ChannelsComponent, GateComponent, UserComponent, SettingComponent, FriendsComponent],
   imports: [BrowserModule, AppBootstrapModule, AppRoutingModule],
   providers: [],
   bootstrap: [AppComponent]
