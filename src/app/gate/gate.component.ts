@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { AuthService } from "../business-services/auth.service";
 
 @Component({
   selector: "app-gate",
@@ -7,9 +8,11 @@ import { Component, OnInit } from "@angular/core";
 })
 export class GateComponent implements OnInit {
   featureSelecter: string = "user";
-  constructor() {}
+  constructor(private authService: AuthService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.authService.isLoggedIn();
+  }
 
   selectFeature(feature: string): void {
     this.featureSelecter = feature;
