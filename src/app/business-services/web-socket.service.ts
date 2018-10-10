@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import * as socketIo from "socket.io-client";
+import * as _ from "lodash";
 
 import { InvitationService } from "./invitation.service";
 import { ChannelService } from "./channel.service";
@@ -103,11 +104,27 @@ export class WebSocketService {
   subscribeChannelList(): WebSocketService {
     // get ch list while user logging
     let channelService = this.channelService;
+    let conversationService = this.conversationService;
     this.socket.on(MessageAppSettings.RESPONSE_EVENTS.CHANNEL_LIST, function(
       packet
     ) {
-      console.log(JSON.stringify(packet, null, 2));
-      // channelService.subscribeList(packet);
+      // console.log(JSON.stringify(packet, null, 2));
+
+      conversationService.subscribeHistory(
+        packet.data.map(channel => {
+          return {
+            ciid: channel.ciid,
+            conversations: channel.conversations
+          };
+        })
+      );
+      channelService.subscribeList(
+        packet.data.map(channel => {
+          channel.conversations = null;
+          delete channel.conversations;
+          return channel;
+        })
+      );
     });
     return this;
   }

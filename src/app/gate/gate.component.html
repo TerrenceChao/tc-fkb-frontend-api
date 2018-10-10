@@ -16,7 +16,7 @@
     <div class="d-flex">
       <div class="dropdown mr-l">
         <a class="dropdown-toggle" id="dropdownMenuOffset" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <img id="notifyBell" src="assets/img/operation.svg" class="icon">
+          <img id="notifyBell" src="assets/img/operation-3.svg" class="icon">
         </a>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuOffset">
           <a class="dropdown-item" (click)="selectFeature('setting')">Setting</a>
@@ -53,6 +53,20 @@
               <img id="directory" src="assets/img/dir.svg" class="icon">&nbsp;
               <a (click)="selectFeature('channels')">Channels</a>
             </div>
+
+            <div *ngIf="featureSelecter === 'channels'">
+              <div class="list-group-item">Create Channel (+)</div>
+              <div class="list-group-item">
+                <ul class="list-group list-group-flush list_info">
+                  <li *ngFor="let channel of channelList" class="list-group-item">
+                    <div>
+                      {{channel.name}} (-)
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
           </li>
         </ul>
 
