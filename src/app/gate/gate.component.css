@@ -2,3 +2,8 @@
   height: 60%;
   overflow-y: auto;
 }
+
+.operation_bar {
+  padding-right: 3px;
+  float: left;
+}

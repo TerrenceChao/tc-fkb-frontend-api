@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { Observable, of } from "rxjs";
 
 @Injectable({
   providedIn: "root"
@@ -7,10 +8,10 @@ export class ConversationService {
   private conversationHistories = {};
   constructor() {}
 
-  getConversations(ciid: string): Array<any> {
-    return this.conversationHistories[ciid]
-      ? this.conversationHistories[ciid]
-      : [];
+  getConversations(ciid: string): Observable<Array<any>> {
+    return of(
+      this.conversationHistories[ciid] ? this.conversationHistories[ciid] : []
+    );
   }
 
   subscribeHistory(channelConversations: Array<any>) {

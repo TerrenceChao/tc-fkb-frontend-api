@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
 import { ChannelService } from "../business-services/channel.service";
 import { ConversationService } from "../business-services/conversation.service";
 
@@ -8,17 +8,22 @@ import { ConversationService } from "../business-services/conversation.service";
   styleUrls: ["./channels.component.css"]
 })
 export class ChannelsComponent implements OnInit {
-  public currentChannelConv: Array<any> = [];
+  @Input()
+  channelInfoID: string;
+  chList: Array<any> = [];
+  currentChannelConv: Array<any> = [];
   constructor(
     private channelService: ChannelService,
     private conversationService: ConversationService
   ) {}
 
   ngOnInit() {
-    this.getConversations("ciid B");
+    this.getConversations(this.channelInfoID);
   }
 
   getConversations(ciid: string): void {
-    this.currentChannelConv = this.conversationService.getConversations(ciid);
+    this.conversationService
+      .getConversations(ciid)
+      .subscribe(conversations => (this.currentChannelConv = conversations));
   }
 }
