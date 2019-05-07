@@ -61,7 +61,7 @@
               <div class="list-group-item">
                 <ul class="list-group list-group-flush list_info">
                   <li *ngFor="let channel of channelList" class="list-group-item">
-                    <div class='operation_bar' (click)="selectChannel(channel.ciid)">
+                    <div class='operation_bar' (click)="currentChannel=channel.ciid">
                       {{channel.name}}
                     </div>
                     <div class='operation_bar'>

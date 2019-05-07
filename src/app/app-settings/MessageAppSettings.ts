@@ -1,37 +1,55 @@
 export class MessageAppSettings {
-  public static DOMAIN: string = "http://localhost:3003";
+  public static DOMAIN: string = "http://localhost:3004";
 
   public static REQUEST_EVENTS = {
     // AuthenticationManager
     LOGIN: "req_authentication_login",
     LOGOUT: "req_authentication_logout",
+    EXTEND_VALIDITY: "req_authentication_extend_validity",
 
     // ChannelManager
     GET_CHANNEL_LIST: "req_channel_get_channel_list",
     CREATE_CHANNEL: "req_channel_create_channel",
+    JOIN_CHANNEL: "req_channel_join_channel",
     LEAVE_CHANNEL: "req_channel_leave_channel",
-    SEND_CONVERSATION: "req_channel_send_conversation",
-    GET_CONVERSATION: "req_channel_get_conversation",
+
+    // ConversationManager
+    COMPETE_LOCK: "req_conversation_compete_lock",
+    RELEASE_LOCK: "req_conversation_release_lock",
+    SEND_CONVERSATION: "req_conversation_send_conversation",
+    GET_CONVERSATION: "req_conversation_get_conversation",
+    // MARK_AS_READ: "req_conversation_mark_as_read",
 
     // InvitationManager
     GET_INVITATION_LIST: "req_invitation_get_invitation_list",
     SEND_INVITATION: "req_invitation_send_invitation",
-    DEAL_WITH_INVITATION: "req_invitation_deal_with_invitation"
+    DEAL_WITH_INVITATION: "req_invitation_deal_with_invitation",
+    CONFIRM_INVITATION: "req_invitation_confirm_invitation"
+
   };
 
   public static RESPONSE_EVENTS = {
-    // Channel
-    CHANNEL_LIST: "channel_list",
-    CHANNEL_CREATED: "channel_created",
-    CHANNEL_REMOVED: "channel_removed",
+    // Personal info (to.USER)
+  PERSONAL_INFO: "personal_info",
+  EXCEPTION_ALERT: "exception_alert",
 
-    // Channel
-    INVITATION_LIST_FROM_CHANNEL: "invitation_list_from_channel",
-    INVITATION_FROM_CHANNEL_TO_ME: `invitation_from_channel_to_me`,
-    CONVERSATION_LIST: `conversation_list`,
-    CONVERSATION_FROM_CHANNEL: "conversation_from_channel",
+  // Invitation (realtime) (to.USER)
+  INVITATION_TO_ME: "invitation_to_me",
+  // Invitation (non-realtime) (to.USER)
+  INVITATION_LIST: "invitation_list",
 
-    // Exception
-    EXCEPTION_ALERT: "exception_alert"
+  // Channel (realtime) (to.USER)
+  CHANNEL_CREATED: "channel_created",
+  CHANNEL_REMOVED: "channel_removed",
+  // Channel (realtime) (to.CHANNEL / USER)
+  CHANNEL_JOINED: "channel_joined",
+  CHANNEL_LEFT: "channel_left",
+  // Channel (non-realtime) (to.USER)
+  CHANNEL_LIST: "channel_list",
+
+  // Conversation (realtime) (to.CHANNEL)
+  CONVERSATION_FROM_CHANNEL: "conversation_from_channel",
+  // Conversation (non-realtime) (to.USER)
+  CONVERSATION_LIST: "conversation_list"
   };
 }

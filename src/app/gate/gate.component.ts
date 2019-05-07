@@ -48,15 +48,5 @@ export class GateComponent implements OnInit {
     this.channelService
       .getList()
       .subscribe(chList => (this.channelList = chList));
-    // this.channels.getList();
-    // this.channelList = this.channels.chList;
-  }
-
-  selectChannel(ciid: string): void {
-    this.currentChannel = ciid;
-    console.log(`this.currentChannel is ${this.currentChannel}`);
-    // this.conversationService.getConversations(ciid);
-    // this.channels.channelInfoID = ciid;
-    // this.channels.getConversations(ciid);
   }
 }

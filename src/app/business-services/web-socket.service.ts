@@ -17,7 +17,9 @@ export class WebSocketService {
     private channelService: ChannelService,
     private conversationService: ConversationService
   ) {
-    invitationService.setWebSocket(this);
+    this.invitationService.setWebSocket(this);
+
+    this.conversationService.setWebSocket(this);
   }
 
   initSocket(): WebSocketService {
@@ -40,11 +42,22 @@ export class WebSocketService {
   login(): WebSocketService {
     // use sessionId & msgToken to check if a user is authenticated.
     this.socket.emit(MessageAppSettings.REQUEST_EVENTS.LOGIN, {
+      msgToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnR1c2VyYWdlbnQiOiJNb3ppbGxhLzUuMCAoWDExOyBMaW51eCB4ODZfNjQpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS83My4wLjM2ODMuNzUgU2FmYXJpLzUzNy4zNiIsInVpZCI6IjM0NWIxYzRjLTEyOGMtNDI4Ni04NDMxLTc4ZDE2ZDI4NWYzOCIsImlhdCI6MTU1NzE2MDI4OSwiZXhwIjoxNTU3MjQ2Njg5fQ.tCTubn7y5qQnalj6dcPmKykdZPgP1NJRljH92sfKDTM",
+
+
+
+
       sessionId: "session id",
-      msgToken: "msg token",
-      uid: "Alice",
-      limit: 5,
-      skip: 10
+      uid: "345b1c4c-128c-4286-8431-78d16d285f38",
+      nickname: "Alice",
+      clientuseragent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.75 Safari/537.36",
+      
+      inviLimit: 10,
+      inviSkip: 10,
+      chanLimit: 10,
+      chanSkip: 10,
+      convLimit: 10,
+      convSkip: 10
     });
     return this;
   }
@@ -54,32 +67,41 @@ export class WebSocketService {
    */
   logout(packet: any): WebSocketService {
     // logout => leave channel & user(uid)
-    this.socket.emit(MessageAppSettings.REQUEST_EVENTS.LOGOUT);
+    this.socket.emit(MessageAppSettings.REQUEST_EVENTS.LOGOUT, packet);
     return this;
   }
 
   getChannelList(packet: any): WebSocketService {
-    this.socket.emit(MessageAppSettings.REQUEST_EVENTS.GET_CHANNEL_LIST);
+    this.socket.emit(
+      MessageAppSettings.REQUEST_EVENTS.GET_CHANNEL_LIST,
+      packet
+    );
     return this;
   }
 
   createChannel(packet: any): WebSocketService {
-    this.socket.emit(MessageAppSettings.REQUEST_EVENTS.CREATE_CHANNEL);
+    this.socket.emit(MessageAppSettings.REQUEST_EVENTS.CREATE_CHANNEL, packet);
     return this;
   }
 
   leaveChannel(packet: any): WebSocketService {
-    this.socket.emit(MessageAppSettings.REQUEST_EVENTS.LEAVE_CHANNEL);
+    this.socket.emit(MessageAppSettings.REQUEST_EVENTS.LEAVE_CHANNEL, packet);
     return this;
   }
 
   sendConversation(packet: any): WebSocketService {
-    this.socket.emit(MessageAppSettings.REQUEST_EVENTS.SEND_CONVERSATION);
+    this.socket.emit(
+      MessageAppSettings.REQUEST_EVENTS.SEND_CONVERSATION,
+      packet
+    );
     return this;
   }
 
   getConversationHistory(packet: any): WebSocketService {
-    this.socket.emit(MessageAppSettings.REQUEST_EVENTS.GET_CONVERSATION);
+    this.socket.emit(
+      MessageAppSettings.REQUEST_EVENTS.GET_CONVERSATION,
+      packet
+    );
     return this;
   }
 
@@ -91,11 +113,11 @@ export class WebSocketService {
   }
 
   sendInvitation(packet: any): WebSocketService {
-    this.socket.emit(MessageAppSettings.REQUEST_EVENTS.SEND_INVITATION);
+    this.socket.emit(MessageAppSettings.REQUEST_EVENTS.SEND_INVITATION, packet);
     return this;
   }
 
-  dialWithInvitation(packet: any): WebSocketService {
+  dealWithInvitation(packet: any): WebSocketService {
     this.socket.emit(MessageAppSettings.REQUEST_EVENTS.DEAL_WITH_INVITATION);
     return this;
   }
@@ -156,7 +178,7 @@ export class WebSocketService {
     // 2) make a request
     let invitationService = this.invitationService;
     this.socket.on(
-      MessageAppSettings.RESPONSE_EVENTS.INVITATION_LIST_FROM_CHANNEL,
+      MessageAppSettings.RESPONSE_EVENTS.INVITATION_LIST,
       function(packet) {
         invitationService.subscribeChannelHistory(packet);
       }
@@ -167,7 +189,7 @@ export class WebSocketService {
   subscribeComingChannelInvitation(): WebSocketService {
     let invitationService = this.invitationService;
     this.socket.on(
-      MessageAppSettings.RESPONSE_EVENTS.INVITATION_FROM_CHANNEL_TO_ME,
+      MessageAppSettings.RESPONSE_EVENTS.INVITATION_TO_ME,
       function(packet) {
         console.log(JSON.stringify(packet, null, 2));
         // invitationService.subscribeComingFromChannel(packet);
@@ -181,8 +203,8 @@ export class WebSocketService {
     this.socket.on(
       MessageAppSettings.RESPONSE_EVENTS.CONVERSATION_LIST,
       function(packet) {
-        console.log(JSON.stringify(packet, null, 2));
-        // conversationService.subscribeHistory(packet);
+        // console.log(JSON.stringify(packet, null, 2));
+        conversationService.subscribeHistory(packet);
       }
     );
     return this;
@@ -194,7 +216,7 @@ export class WebSocketService {
       MessageAppSettings.RESPONSE_EVENTS.CONVERSATION_FROM_CHANNEL,
       function(packet) {
         console.log(JSON.stringify(packet, null, 2));
-        // conversationService.subscribeComing(packet);
+        conversationService.subscribeComing(packet);
       }
     );
     return this;
