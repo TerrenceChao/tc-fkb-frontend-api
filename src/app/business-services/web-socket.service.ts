@@ -19,7 +19,7 @@ export class WebSocketService {
     private conversationService: ConversationService
   ) {
     this.invitationService.setWebSocket(this);
-
+    this.channelService.setWebSocket(this);
     this.conversationService.setWebSocket(this);
   }
 
@@ -29,13 +29,20 @@ export class WebSocketService {
   }
 
   subscribeEvents(): WebSocketService {
-    this.subscribeChannelList()
+    this
+      .subscribePersonalInfo()
+      .subscribeExceptionAlert()
+      // common used for both friend/channel invitaiton
+      .subscribeInvitationInRealtime()
+      // common used for both friend/channel invitaiton
+      .subscribeInvitationList()
       .subscribeChannelCreated()
       .subscribeChannelRemoved()
-      .subscribeChannelInvitationHistory()
-      .subscribeComingChannelInvitation()
-      .subscribeConversationHistory()
-      .subscribeComingConversation();
+      .subscribeChannelJoined()
+      .subscribeChannelLeft()
+      .subscribeChannelList()
+      .subscribeConversationInRealtime()
+      .subscribeConversationList();
     return this;
   }
 
@@ -53,11 +60,11 @@ export class WebSocketService {
       clientuseragent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.75 Safari/537.36',
 
       inviLimit: 10,
-      inviSkip: 10,
+      inviSkip: 0,
       chanLimit: 10,
-      chanSkip: 10,
+      chanSkip: 0,
       convLimit: 10,
-      convSkip: 10
+      convSkip: 0
     });
     return this;
   }
@@ -71,11 +78,13 @@ export class WebSocketService {
     return this;
   }
 
+  extendValidity(packet: any): WebSocketService {
+    this.socket.emit(EVENTS.REQUEST.EXTEND_VALIDITY, packet);
+    return this;
+  }
+
   getChannelList(packet: any): WebSocketService {
-    this.socket.emit(
-      EVENTS.REQUEST.GET_CHANNEL_LIST,
-      packet
-    );
+    this.socket.emit(EVENTS.REQUEST.GET_CHANNEL_LIST, packet);
     return this;
   }
 
@@ -84,166 +93,164 @@ export class WebSocketService {
     return this;
   }
 
+  joinChannel(packet: any): WebSocketService {
+    this.socket.emit(EVENTS.REQUEST.JOIN_CHANNEL, packet);
+    return this;
+  }
+
   leaveChannel(packet: any): WebSocketService {
     this.socket.emit(EVENTS.REQUEST.LEAVE_CHANNEL, packet);
     return this;
   }
 
+  competeLock(packet: any): WebSocketService {
+    this.socket.emit(EVENTS.REQUEST.COMPETE_LOCK, packet);
+    return this;
+  }
+
+  releaseLock(packet: any): WebSocketService {
+    this.socket.emit(EVENTS.REQUEST.RELEASE_LOCK, packet);
+    return this;
+  }
+
   sendConversation(packet: any): WebSocketService {
-    this.socket.emit(
-      EVENTS.REQUEST.SEND_CONVERSATION,
-      packet
-    );
+    this.socket.emit(EVENTS.REQUEST.SEND_CONVERSATION, packet);
     return this;
   }
 
-  getConversationHistory(packet: any): WebSocketService {
-    this.socket.emit(
-      EVENTS.REQUEST.GET_CONVERSATION,
-      packet
-    );
+  getConversationList(packet: any): WebSocketService {
+    this.socket.emit(EVENTS.REQUEST.GET_CONVERSATION, packet);
     return this;
   }
 
-  getChannelInvitationHistory(packet: any): void {
-    this.socket.emit(
-      EVENTS.REQUEST.GET_INVITATION_LIST,
-      packet
-    );
+  getChannelInvitationList(packet: any): WebSocketService {
+    this.socket.emit(EVENTS.REQUEST.GET_INVITATION_LIST, packet);
+    return this;
   }
 
-  sendInvitation(packet: any): WebSocketService {
+  sendChannelInvitation(packet: any): WebSocketService {
     this.socket.emit(EVENTS.REQUEST.SEND_INVITATION, packet);
     return this;
   }
 
-  dealWithInvitation(packet: any): WebSocketService {
+  dealWithChannelInvitation(packet: any): WebSocketService {
     this.socket.emit(EVENTS.REQUEST.DEAL_WITH_INVITATION);
     return this;
   }
 
-  // RESPONSE
-  subscribeChannelList(): WebSocketService {
-    // get ch list while user logging
-    let channelService = this.channelService;
-    // let conversationService = this.conversationService;
-    this.socket.on(EVENTS.RESPONSE.CHANNEL_LIST, function(
-      packet
-    ) {
-      console.log(JSON.stringify(packet, null, 2));
-      channelService.subscribeList(
-        packet.data.map(channel => {
-          channel.conversations = null;
-          delete channel.conversations;
-          return channel;
-        })
-      );
+  confirmChannelInvitation(packet: any): WebSocketService {
+    this.socket.emit(EVENTS.REQUEST.CONFIRM_INVITATION);
+    return this;
+  }
 
-      // conversationService.subscribeHistory(
-      //   packet.data.map(channel => {
-      //     return {
-      //       ciid: channel.ciid,
-      //       conversations: channel.conversations
-      //     };
-      //   })
-      // );
-    });
+  // used in friend invitation for temporary. (because you don't have notification service)
+  sendMessage(packet: any): WebSocketService {
+    this.socket.emit(EVENTS.REQUEST.SEND_MESSAGE);
+    return this;
+  }
+
+  // RESPONSE
+  subscribePersonalInfo(): WebSocketService {
+    this.socket.on(
+      EVENTS.RESPONSE.PERSONAL_INFO,
+      packet => console.log(JSON.stringify(packet, null, 2))
+    );
+    return this;
+  }
+
+  subscribeExceptionAlert(): WebSocketService {
+    this.socket.on(
+      EVENTS.RESPONSE.EXCEPTION_ALERT,
+      packet => console.log(JSON.stringify(packet, null, 2))
+    );
+    return this;
+  }
+
+  // common used for both friend/channel invitaiton
+  subscribeInvitationInRealtime(): WebSocketService {
+    this.socket.on(
+      EVENTS.RESPONSE.INVITATION_TO_ME,
+      packet => console.log(JSON.stringify(packet, null, 2))
+    );
+    return this;
+  }
+
+  // common used for both friend/channel invitaiton
+  subscribeInvitationList(): WebSocketService {
+    this.socket.on(
+      EVENTS.RESPONSE.INVITATION_LIST,
+      packet => this.invitationService.subscribeInvitationList(packet)
+    );
     return this;
   }
 
   subscribeChannelCreated(): WebSocketService {
-    let channelService = this.channelService;
-    this.socket.on(EVENTS.RESPONSE.CHANNEL_CREATED, function(
-      packet
-    ) {
-      console.log(JSON.stringify(packet, null, 2));
-      // channelService.subscribeNewCreated(packet);
-    });
+    this.socket.on(
+      EVENTS.RESPONSE.CHANNEL_CREATED,
+      packet => this.channelService.subscribeCreated(packet)
+    );
     return this;
   }
 
   subscribeChannelRemoved(): WebSocketService {
-    let channelService = this.channelService;
-    this.socket.on(EVENTS.RESPONSE.CHANNEL_REMOVED, function(
-      packet
-    ) {
-      console.log(JSON.stringify(packet, null, 2));
-      // channelService.subscribeRemoved(packet);
-    });
+    this.socket.on(
+      EVENTS.RESPONSE.CHANNEL_REMOVED,
+      // needn't call channelService
+      packet => console.log(JSON.stringify(packet, null ,2))
+    );
     return this;
   }
 
   subscribeChannelJoined(): WebSocketService {
-    this.socket.on(EVENTS.RESPONSE.CHANNEL_JOINED, (packet) => {
-      console.log(JSON.stringify(packet, null, 2))
-      // this.channelService.subscribeJoined(packet)
-    })
-    return this;
-  }
-
-  WebSocketServiceLeft(): WebSocketService {
-    this.socket.on(EVENTS.RESPONSE.CHANNEL_LEFT, (packet) => {
-      console.log(JSON.stringify(packet, null, 2))
-      // this.channelService.subscribeLeft(packet)
-    })
-    return this;
-  }
-
-  subscribeChannelInvitationHistory(): WebSocketService {
-    // 1) get invitation list while user logging
-    // 2) make a request
-    let invitationService = this.invitationService;
     this.socket.on(
-      EVENTS.RESPONSE.INVITATION_LIST,
-      function(packet) {
-        invitationService.subscribeChannelHistory(packet);
-      }
+      EVENTS.RESPONSE.CHANNEL_JOINED,
+      packet => this.channelService.subscribeJoined(packet)
     );
     return this;
   }
 
-  subscribeComingChannelInvitation(): WebSocketService {
-    let invitationService = this.invitationService;
+  subscribeChannelLeft(): WebSocketService {
     this.socket.on(
-      EVENTS.RESPONSE.INVITATION_TO_ME,
-      function(packet) {
-        console.log(JSON.stringify(packet, null, 2));
-        // invitationService.subscribeComingFromChannel(packet);
-      }
+      EVENTS.RESPONSE.CHANNEL_LEFT,
+      packet => this.channelService.subscribeLeft(packet)
     );
     return this;
   }
 
-  subscribeConversationHistory(): WebSocketService {
-    let conversationService = this.conversationService;
+  subscribeChannelList(): WebSocketService {
     this.socket.on(
-      EVENTS.RESPONSE.CONVERSATION_LIST,
-      function(packet) {
-        // console.log(JSON.stringify(packet, null, 2));
-        conversationService.subscribeHistory(packet);
-      }
-    );
+      EVENTS.RESPONSE.CHANNEL_LIST,
+      channelList => {
+        channelList.forEach(channel => {
+          if (channel.conversations != null) {
+            this.conversationService.subscribeList({
+              ciid: channel.ciid,
+              list: channel.conversations
+            });
+
+            channel.conversations = null;
+            delete channel.conversations;
+          }
+        });
+
+        this.channelService.subscribeList(channelList);
+    });
     return this;
   }
 
-  subscribeComingConversation(): WebSocketService {
-    let conversationService = this.conversationService;
+  subscribeConversationInRealtime(): WebSocketService {
     this.socket.on(
       EVENTS.RESPONSE.CONVERSATION_FROM_CHANNEL,
-      function(packet) {
-        console.log(JSON.stringify(packet, null, 2));
-        conversationService.subscribeComing(packet);
-      }
+      packet => this.conversationService.receive(packet)
     );
     return this;
   }
 
-  subscribeMessageAppAlert(): WebSocketService {
-    this.socket.on(EVENTS.RESPONSE.EXCEPTION_ALERT, function(
-      packet
-    ) {
-      console.log(JSON.stringify(packet, null, 2));
-    });
+  subscribeConversationList(): WebSocketService {
+    this.socket.on(
+      EVENTS.RESPONSE.CONVERSATION_LIST,
+      packet => this.conversationService.subscribeList(packet)
+    );
     return this;
   }
 }

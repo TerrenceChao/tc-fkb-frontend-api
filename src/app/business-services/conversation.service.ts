@@ -8,73 +8,95 @@ import { WebSocketService } from './web-socket.service';
 })
 export class ConversationService {
   private webSocketService: WebSocketService;
-  private conversationHistories = {};
+  private recordMap: Map<string, any> = new Map();
   constructor() {}
 
-  setWebSocket(webSocketService: WebSocketService): ConversationService {
+  /**
+   * @param {WebSocketService} webSocketService
+   * @memberof ConversationService
+   */
+  setWebSocket(webSocketService: WebSocketService): void {
     this.webSocketService = webSocketService;
-    return this;
   }
 
-  getHistory(ciid: string): Observable<Array<any>> {
-    return of(
-      this.conversationHistories[ciid] ? this.conversationHistories[ciid] : []
-    );
+  /**
+   * @param {string} ciid
+   * @returns {Array<any>}
+   * @memberof ConversationService
+   */
+  showList(ciid: string): Array<any> {
+    return this.recordMap.has(ciid) ?
+      this.recordMap.get(ciid).sort(this.sortByDatetime) : [];
   }
 
-  subscribeHistory(channelConversations: Array<any>) {
-    channelConversations.reduce((histories, channel) => {
-      console.log(JSON.stringify(channel, null, 2));
-
-      if (histories[channel.ciid] === undefined) {
-        histories[channel.ciid] = channel.conversations;
-      } else {
-        histories[channel.ciid] = this.concatConv(
-          histories[channel.ciid],
-          channel.conversations
-        );
-      }
-
-      return histories;
-    }, this.conversationHistories);
+  /**
+   * @private
+   * @param {*} a
+   * @param {*} b
+   * @returns {Number}
+   * @memberof ConversationService
+   */
+  private sortByDatetime(a: any, b: any): Number {
+    return a.datetime < b.datetime ? 1 : -1;
   }
 
-  private concatConv(history: Array<any>, coming: Array<any>): Array<any> {
-    // should be sorted by time(utc) ...
-    return history.concat(coming);
+  /**
+   * @param {*:{chid, ciid, sender, content, type, datetime}} reqPacket
+   * @memberof ConversationService
+   */
+  send(reqPacket: any): void {
+    this.webSocketService.sendConversation(reqPacket);
   }
 
-  sendConversation(packet: any) {
-    console.log('send conv: ', JSON.stringify(packet, null, 2))
-    this.webSocketService.sendConversation(packet);
+  /**
+   * @param {*:{chid, ciid, sender, content, type, datetime}} resPacket
+   * @memberof ConversationService
+   */
+  receive(resPacket: any): void {
+    this.appendOneRecord(resPacket.ciid, resPacket);
   }
 
-  subscribeComing(packet: any) {
-    console.log(`subscribeComing: ${JSON.stringify(packet, null, 2)}`);
-    if (packet.data === undefined) {
-      return;
+  /**
+   * @private
+   * @param {string} ciid
+   * @param {*:{chid, ciid, sender, content, type, datetime}} record
+   * @memberof ConversationService
+   */
+  private appendOneRecord(ciid: string, record: any): void {
+    if ( ! this.recordMap.has(ciid)) {
+      this.recordMap.set(ciid, []);
     }
 
-    let histories = this.conversationHistories;
-    let conversation = this.packConversation(packet);
-    // console.log(`conversation: ${JSON.stringify(conversation, null, 2)}`);
-
-    if (histories['ciid B'] === undefined) {
-      histories['ciid B'] = [conversation];
-    } else {
-      histories['ciid B'] = this.concatConv(histories['ciid B'], [
-        conversation
-      ]);
-    }
+    this.recordMap.get(ciid).push(record);
   }
 
-  private packConversation(packet: any): any {
-    let data = packet.data;
-    return {
-      sender: data.uid,
-      type: data.type || 'text',
-      content: data.conversation,
-      created_at: data.datetime
-    };
+  /**
+   * @param {*:{uid, ciid, convLimit, convSkip}} reqPacket
+   * @memberof ConversationService
+   */
+  getList(reqPacket: any): void {
+    this.webSocketService.getConversationList(reqPacket);
+  }
+
+  /**
+   * @param {*:{ciid, list}} resPacket
+   * @memberof ConversationService
+   */
+  subscribeList(resPacket: any): void {
+    this.appendRecords(resPacket.ciid, resPacket.list);
+  }
+
+  /**
+   * @private
+   * @param {string} ciid
+   * @param {Array<any>} records
+   * @memberof ConversationService
+   */
+  private appendRecords(ciid: string, records: Array<any>): void {
+    if ( ! this.recordMap.has(ciid)) {
+      this.recordMap.set(ciid, []);
+    }
+
+    this.recordMap.get(ciid).concat(records);
   }
 }

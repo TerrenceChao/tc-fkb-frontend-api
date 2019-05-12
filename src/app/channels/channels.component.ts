@@ -20,7 +20,7 @@ export class ChannelsComponent implements OnInit, OnChanges {
   currentChannelConv: Array<any> = [];
   saying: string = '';
   constructor(
-    // private channelService: ChannelService,
+    private channelService: ChannelService,
     private conversationService: ConversationService
   ) {}
 
@@ -49,17 +49,18 @@ export class ChannelsComponent implements OnInit, OnChanges {
       .subscribe(conversations => (this.currentChannelConv = conversations));
   }
 
-  sendConversation(message: any) {
+  sendConversation(conversation: any) {
     if (this.saying === '') {
       return;
     }
 
     let channelInfoID = this.channelInfoID;
-    this.conversationService.sendConversation({
-      ciid: channelInfoID,
-      uid: 'Jessica',
-      convType: 'text',
-      conversation: message,
+    this.conversationService.send({
+      chid: channelInfoID,
+      ciid: '',
+      sender: uid,
+      content: conversation,
+      type: 'text',
       datetime: Date.now()
     });
 

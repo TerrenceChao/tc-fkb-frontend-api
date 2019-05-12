@@ -15,11 +15,11 @@ export class InvitationService {
     return this;
   }
 
-  getChannelHistory(reqPacket: any): any {
-    this.webSocketService.getChannelInvitationHistory(reqPacket);
+  getChannelInvitationList(reqPacket: any): any {
+    this.webSocketService.getChannelInvitationList(reqPacket);
   }
 
-  subscribeChannelHistory(resPacket: any): any {
+  subscribeInvitationList(resPacket: any): any {
     // 1) assign resPacket into local data structure
     // 2) return resPacket
     console.log(JSON.stringify(resPacket, null, 2));
