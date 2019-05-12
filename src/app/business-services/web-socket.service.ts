@@ -50,8 +50,7 @@ export class WebSocketService {
   login(): WebSocketService {
     // use sessionId & msgToken to check if a user is authenticated.
     this.socket.emit(EVENTS.REQUEST.LOGIN, {
-      msgToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnR1c2VyYWdlbnQiOiJNb3ppbGxhLzUuMCAoWDExOyBMaW51eCB4ODZfNjQpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS83My4wLjM2ODMuNzUgU2FmYXJpLzUzNy4zNiIsInVpZCI6IjM0NWIxYzRjLTEyOGMtNDI4Ni04NDMxLTc4ZDE2ZDI4NWYzOCIsImlhdCI6MTU1NzU4MzU4NywiZXhwIjoxNTU3NjY5OTg3fQ.MEZytOwjalp2_zj3TtdDaad2pPzq0q-7i_8WSk7m8WE',
-
+      msgToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnR1c2VyYWdlbnQiOiJNb3ppbGxhLzUuMCAoWDExOyBMaW51eCB4ODZfNjQpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS83My4wLjM2ODMuNzUgU2FmYXJpLzUzNy4zNiIsInVpZCI6IjM0NWIxYzRjLTEyOGMtNDI4Ni04NDMxLTc4ZDE2ZDI4NWYzOCIsImlhdCI6MTU1NzY3MDA0MiwiZXhwIjoxNTU3NzU2NDQyfQ.bbBRaI-6WvMHWOZgiI8lz9lOZftkD3SwXvqyzTScrx0',
 
 
       sessionId: 'session id',

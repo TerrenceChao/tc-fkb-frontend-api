@@ -16,7 +16,7 @@ import { ConversationService } from '../business-services/conversation.service';
 export class ChannelsComponent implements OnInit, OnChanges {
   @Input()
   channelInfoID: string = '';
-  // chList: Array<any> = [];
+  chList: Array<any> = [];
   currentChannelConv: Array<any> = [];
   saying: string = '';
   constructor(
@@ -29,7 +29,7 @@ export class ChannelsComponent implements OnInit, OnChanges {
       // find the latest channel in the feature
       return;
     }
-    this.getHistory(this.channelInfoID);
+    this.chList = this.channelService.showList();
   }
 
   ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
@@ -45,11 +45,11 @@ export class ChannelsComponent implements OnInit, OnChanges {
 
   private getHistory(ciid: string): void {
     this.conversationService
-      .getHistory(ciid)
-      .subscribe(conversations => (this.currentChannelConv = conversations));
+      // .getHistory(ciid)
+      // .subscribe(conversations => (this.currentChannelConv = conversations));
   }
 
-  sendConversation(conversation: any) {
+  sendConversation(content: any) {
     if (this.saying === '') {
       return;
     }
@@ -58,13 +58,13 @@ export class ChannelsComponent implements OnInit, OnChanges {
     this.conversationService.send({
       chid: channelInfoID,
       ciid: '',
-      sender: uid,
-      content: conversation,
+      sender: '345b1c4c-128c-4286-8431-78d16d285f38',
+      content: content,
       type: 'text',
       datetime: Date.now()
     });
 
-    this.getHistory(this.channelInfoID);
+    // this.getHistory(this.channelInfoID);
     this.saying = '';
   }
 }
