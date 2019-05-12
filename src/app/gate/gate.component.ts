@@ -1,21 +1,21 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit } from '@angular/core';
 
-import { AuthService } from "../business-services/auth.service";
-import { UserService } from "../business-services/user.service";
-import { FriendService } from "../business-services/friend.service";
-import { ChannelService } from "../business-services/channel.service";
+import { AuthService } from '../business-services/auth.service';
+import { UserService } from '../business-services/user.service';
+import { FriendService } from '../business-services/friend.service';
+import { ChannelService } from '../business-services/channel.service';
 
 @Component({
-  selector: "app-gate",
-  templateUrl: "./gate.component.html",
-  styleUrls: ["./gate.component.css"]
+  selector: 'app-gate',
+  templateUrl: './gate.component.html',
+  styleUrls: ['./gate.component.css']
 })
 export class GateComponent implements OnInit {
-  featureSelecter: string = "user";
+  featureSelecter: string = 'user';
 
   friendList: Array<any> = [];
   channelList: Array<any> = [];
-  currentChannel: string = "";
+  currentChannel: string = '';
 
   constructor(
     private authService: AuthService,
@@ -32,14 +32,14 @@ export class GateComponent implements OnInit {
     this.featureSelecter = feature;
 
     switch (feature) {
-      case "user":
+      case 'user':
         break;
-      case "friends":
+      case 'friends':
         break;
-      case "channels":
+      case 'channels':
         this.getChannelList();
         break;
-      case "setting":
+      case 'setting':
         break;
     }
   }

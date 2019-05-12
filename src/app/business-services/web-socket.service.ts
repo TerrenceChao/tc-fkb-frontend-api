@@ -1,14 +1,14 @@
-import { Injectable } from "@angular/core";
-import * as socketIo from "socket.io-client";
-import * as _ from "lodash";
+import { Injectable } from '@angular/core';
+import * as socketIo from 'socket.io-client';
+import * as _ from 'lodash';
 
-import { InvitationService } from "./invitation.service";
-import { ChannelService } from "./channel.service";
-import { ConversationService } from "./conversation.service";
-import { MessageAppSettings } from "../app-settings/MessageAppSettings";
+import { InvitationService } from './invitation.service';
+import { ChannelService } from './channel.service';
+import { ConversationService } from './conversation.service';
+import { MessageAppSettings } from '../app-settings/MessageAppSettings';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class WebSocketService {
   private socket;
@@ -42,16 +42,15 @@ export class WebSocketService {
   login(): WebSocketService {
     // use sessionId & msgToken to check if a user is authenticated.
     this.socket.emit(MessageAppSettings.REQUEST_EVENTS.LOGIN, {
-      msgToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnR1c2VyYWdlbnQiOiJNb3ppbGxhLzUuMCAoWDExOyBMaW51eCB4ODZfNjQpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS83My4wLjM2ODMuNzUgU2FmYXJpLzUzNy4zNiIsInVpZCI6IjM0NWIxYzRjLTEyOGMtNDI4Ni04NDMxLTc4ZDE2ZDI4NWYzOCIsImlhdCI6MTU1NzE2MDI4OSwiZXhwIjoxNTU3MjQ2Njg5fQ.tCTubn7y5qQnalj6dcPmKykdZPgP1NJRljH92sfKDTM",
+      msgToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnR1c2VyYWdlbnQiOiJNb3ppbGxhLzUuMCAoWDExOyBMaW51eCB4ODZfNjQpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS83My4wLjM2ODMuNzUgU2FmYXJpLzUzNy4zNiIsInVpZCI6IjM0NWIxYzRjLTEyOGMtNDI4Ni04NDMxLTc4ZDE2ZDI4NWYzOCIsImlhdCI6MTU1NzU4MzU4NywiZXhwIjoxNTU3NjY5OTg3fQ.MEZytOwjalp2_zj3TtdDaad2pPzq0q-7i_8WSk7m8WE',
 
 
 
+      sessionId: 'session id',
+      uid: '345b1c4c-128c-4286-8431-78d16d285f38',
+      nickname: 'Alice',
+      clientuseragent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.75 Safari/537.36',
 
-      sessionId: "session id",
-      uid: "345b1c4c-128c-4286-8431-78d16d285f38",
-      nickname: "Alice",
-      clientuseragent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.75 Safari/537.36",
-      
       inviLimit: 10,
       inviSkip: 10,
       chanLimit: 10,
@@ -126,20 +125,11 @@ export class WebSocketService {
   subscribeChannelList(): WebSocketService {
     // get ch list while user logging
     let channelService = this.channelService;
-    let conversationService = this.conversationService;
+    // let conversationService = this.conversationService;
     this.socket.on(MessageAppSettings.RESPONSE_EVENTS.CHANNEL_LIST, function(
       packet
     ) {
-      // console.log(JSON.stringify(packet, null, 2));
-
-      conversationService.subscribeHistory(
-        packet.data.map(channel => {
-          return {
-            ciid: channel.ciid,
-            conversations: channel.conversations
-          };
-        })
-      );
+      console.log(JSON.stringify(packet, null, 2));
       channelService.subscribeList(
         packet.data.map(channel => {
           channel.conversations = null;
@@ -147,6 +137,15 @@ export class WebSocketService {
           return channel;
         })
       );
+
+      // conversationService.subscribeHistory(
+      //   packet.data.map(channel => {
+      //     return {
+      //       ciid: channel.ciid,
+      //       conversations: channel.conversations
+      //     };
+      //   })
+      // );
     });
     return this;
   }
@@ -170,6 +169,22 @@ export class WebSocketService {
       console.log(JSON.stringify(packet, null, 2));
       // channelService.subscribeRemoved(packet);
     });
+    return this;
+  }
+
+  subscribeChannelJoined(): WebSocketService {
+    this.socket.on(MessageAppSettings.RESPONSE_EVENTS.CHANNEL_JOINED, (packet) => {
+      console.log(JSON.stringify(packet, null, 2))
+      // this.channelService.subscribeJoined(packet)
+    })
+    return this;
+  }
+
+  WebSocketServiceLeft(): WebSocketService {
+    this.socket.on(MessageAppSettings.RESPONSE_EVENTS.CHANNEL_LEFT, (packet) => {
+      console.log(JSON.stringify(packet, null, 2))
+      // this.channelService.subscribeLeft(packet)
+    })
     return this;
   }
 

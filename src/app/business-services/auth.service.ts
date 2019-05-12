@@ -1,8 +1,8 @@
-import { Injectable } from "@angular/core";
-import { WebSocketService } from "./web-socket.service";
+import { Injectable } from '@angular/core';
+import { WebSocketService } from './web-socket.service';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class AuthService {
   constructor(private webSocketService: WebSocketService) {}

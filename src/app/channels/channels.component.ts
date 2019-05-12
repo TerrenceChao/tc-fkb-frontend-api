@@ -4,28 +4,28 @@ import {
   OnInit,
   OnChanges,
   SimpleChange
-} from "@angular/core";
-import { ChannelService } from "../business-services/channel.service";
-import { ConversationService } from "../business-services/conversation.service";
+} from '@angular/core';
+import { ChannelService } from '../business-services/channel.service';
+import { ConversationService } from '../business-services/conversation.service';
 
 @Component({
-  selector: "app-channels",
-  templateUrl: "./channels.component.html",
-  styleUrls: ["./channels.component.css"]
+  selector: 'app-channels',
+  templateUrl: './channels.component.html',
+  styleUrls: ['./channels.component.css']
 })
 export class ChannelsComponent implements OnInit, OnChanges {
   @Input()
-  channelInfoID: string = "";
+  channelInfoID: string = '';
   // chList: Array<any> = [];
   currentChannelConv: Array<any> = [];
-  saying: string = "";
+  saying: string = '';
   constructor(
     // private channelService: ChannelService,
     private conversationService: ConversationService
   ) {}
 
   ngOnInit() {
-    if (this.channelInfoID === "") {
+    if (this.channelInfoID === '') {
       // find the latest channel in the feature
       return;
     }
@@ -36,7 +36,7 @@ export class ChannelsComponent implements OnInit, OnChanges {
     console.log(`changes: ${JSON.stringify(changes, null, 2)}`);
 
     for (let propName in changes) {
-      if (propName === "channelInfoID") {
+      if (propName === 'channelInfoID') {
         let changedProp = changes[propName];
         this.getHistory(changedProp.currentValue);
       }
@@ -50,20 +50,20 @@ export class ChannelsComponent implements OnInit, OnChanges {
   }
 
   sendConversation(message: any) {
-    if (this.saying === "") {
+    if (this.saying === '') {
       return;
     }
 
     let channelInfoID = this.channelInfoID;
     this.conversationService.sendConversation({
       ciid: channelInfoID,
-      uid: "Jessica",
-      convType: "text",
+      uid: 'Jessica',
+      convType: 'text',
       conversation: message,
       datetime: Date.now()
     });
 
     this.getHistory(this.channelInfoID);
-    this.saying = "";
+    this.saying = '';
   }
 }

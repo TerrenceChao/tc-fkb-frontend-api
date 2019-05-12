@@ -1,10 +1,10 @@
-import { Injectable } from "@angular/core";
-import { Observable, of } from "rxjs";
-import { WebSocketService } from "./web-socket.service";
-import { MessageAppSettings } from "../app-settings/MessageAppSettings";
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { WebSocketService } from './web-socket.service';
+import { MessageAppSettings } from '../app-settings/MessageAppSettings';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class InvitationService {
   private webSocketService: WebSocketService;

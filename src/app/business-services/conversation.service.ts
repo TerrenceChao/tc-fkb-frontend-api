@@ -1,10 +1,10 @@
-import { Injectable } from "@angular/core";
-import { Observable, of } from "rxjs";
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
 
-import { WebSocketService } from "./web-socket.service";
+import { WebSocketService } from './web-socket.service';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class ConversationService {
   private webSocketService: WebSocketService;
@@ -59,10 +59,10 @@ export class ConversationService {
     let conversation = this.packConversation(packet);
     // console.log(`conversation: ${JSON.stringify(conversation, null, 2)}`);
 
-    if (histories["ciid B"] === undefined) {
-      histories["ciid B"] = [conversation];
+    if (histories['ciid B'] === undefined) {
+      histories['ciid B'] = [conversation];
     } else {
-      histories["ciid B"] = this.concatConv(histories["ciid B"], [
+      histories['ciid B'] = this.concatConv(histories['ciid B'], [
         conversation
       ]);
     }
@@ -72,7 +72,7 @@ export class ConversationService {
     let data = packet.data;
     return {
       sender: data.uid,
-      type: data.type || "text",
+      type: data.type || 'text',
       content: data.conversation,
       created_at: data.datetime
     };

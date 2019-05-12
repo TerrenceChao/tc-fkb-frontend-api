@@ -1,10 +1,10 @@
-import { Injectable } from "@angular/core";
-import { Observable, of } from "rxjs";
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
 
-import { ConversationService } from "./conversation.service";
+import { ConversationService } from './conversation.service';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class ChannelService {
   private channelList: Array<any> = [];
