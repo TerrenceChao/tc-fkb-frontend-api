@@ -28,7 +28,7 @@ export class ChannelService {
    * @memberof ChannelService
    */
   showOne(chid: string): any {
-    return this.mapping[chid] ? this.mapping[chid] : {};
+    return this.mapping.has(chid) ? this.mapping.get(chid) : {};
   }
 
   /**
@@ -36,6 +36,11 @@ export class ChannelService {
    * @memberof ChannelService
    */
   showList(): Array<any> {
+    // let list = [];
+    // for (let [chid, channel] of this.mapping) {
+    //   list.push(channel);
+    // }
+
     return this.list;
   }
 
