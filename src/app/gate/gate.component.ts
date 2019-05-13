@@ -1,17 +1,52 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit } from '@angular/core';
+
+import { AuthService } from '../business-services/auth.service';
+import { UserService } from '../business-services/user.service';
+import { FriendService } from '../business-services/friend.service';
+import { ChannelService } from '../business-services/channel.service';
 
 @Component({
-  selector: "app-gate",
-  templateUrl: "./gate.component.html",
-  styleUrls: ["./gate.component.css"]
+  selector: 'app-gate',
+  templateUrl: './gate.component.html',
+  styleUrls: ['./gate.component.css']
 })
 export class GateComponent implements OnInit {
-  featureSelecter: string = "user";
-  constructor() {}
+  featureSelecter: string = 'user';
 
-  ngOnInit() {}
+  friendList: Array<any> = [];
+  channelList: Array<any> = [];
+  currentChannel: string = '';
+
+  constructor(
+    private authService: AuthService,
+    private userService: UserService,
+    private friendService: FriendService,
+    private channelService: ChannelService
+  ) {}
+
+  ngOnInit() {
+    this.authService.isLoggedIn();
+  }
 
   selectFeature(feature: string): void {
     this.featureSelecter = feature;
+
+    switch (feature) {
+      case 'user':
+        break;
+      case 'friends':
+        break;
+      case 'channels':
+        this.getChannelList();
+        break;
+      case 'setting':
+        break;
+    }
+  }
+
+  getChannelList(): void {
+    this.channelService
+      .getList()
+      .subscribe(chList => (this.channelList = chList));
   }
 }

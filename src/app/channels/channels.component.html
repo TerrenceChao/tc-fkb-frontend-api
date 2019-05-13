@@ -1,3 +1,54 @@
-<p>
-  channels works!
-</p>
+<section class="panel panel-warning portlet-item">
+
+  <article class="chat-item" id="chat-form">
+    <section>
+      <div class="mesgs">
+        <div class="msg_history">
+          <div *ngFor="let conv of currentChannelConv">
+
+            <div *ngIf="conv.sender==='Jessica'; else incommingMsg" class="outgoing_msg">
+              <div class="sent_msg">
+
+                <p *ngIf="conv.type==='text'"> {{conv.content}} </p>
+                <div *ngIf="conv.type==='url'">url with preview pic</div>
+                <div *ngIf="conv.type==='pic'">pic</div>
+
+                <span class="time_date">{{conv.created_at | date:'hh:mm a | yyyy-MM-dd'}}</span>
+              </div>
+            </div>
+            <ng-template #incommingMsg>
+              <div class="incomming_msg">
+                <div class="incoming_msg_img">
+                  <img src="assets/img/people.svg">
+                </div>
+                <div class="received_msg">
+                  uid: {{conv.sender}}
+                  <div class="received_withd_msg">
+
+                    <p *ngIf="conv.type==='text'"> {{conv.content}} </p>
+                    <div *ngIf="conv.type==='url'">url with preview pic</div>
+                    <div *ngIf="conv.type==='pic'">pic</div>
+
+                    <span class="time_date">{{conv.created_at | date:'hh:mm a | yyyy-MM-dd'}}</span>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+
+          </div>
+        </div>
+
+        <div class="type_msg">
+          <div class="input_msg_write">
+            <input class="write_msg" placeholder="Type a message" [(ngModel)]="saying" />
+            <button class="msg_send_btn" type="button" (click)="sendConversation(saying)"><i class="fa fa-paper-plane-o"
+                aria-hidden="true"> > </i></button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </article>
+
+
+</section>
