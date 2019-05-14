@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 
-import { ConversationService } from './conversation.service';
-import { WebSocketService } from './web-socket.service';
+import { ConversationService } from './conversation/conversation.service';
+import { WebSocketService } from '../socket/web-socket.service';
+import { Channel } from './channel';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChannelService {
-  private list: Array<any> = [];
-  private mapping: Map<string, any> = new Map();
+  private list: Array<Channel> = [];
+  private mapping: Map<string, Channel> = new Map();
   private webSocketService: WebSocketService;
 
   constructor(private conversationService: ConversationService) {}
@@ -24,7 +25,7 @@ export class ChannelService {
 
   /**
    * @param {string} chid
-   * @returns {*:{chid, ciid, name, creator, invitees, members, latestSpoke, lastGlimpse}}
+   * @returns {Channel}
    * @memberof ChannelService
    */
   showOne(chid: string): any {
@@ -32,10 +33,18 @@ export class ChannelService {
   }
 
   /**
-   * @returns {Array<any>} channelList
+   * @returns {Map<string, Channel>}
    * @memberof ChannelService
    */
-  showList(): Array<any> {
+  showMapping(): Map<string, Channel> {
+    return this.mapping;
+  }
+
+  /**
+   * @returns {Array<Channel>} channelList
+   * @memberof ChannelService
+   */
+  showList(): Array<Channel> {
     // let list = [];
     // for (let [chid, channel] of this.mapping) {
     //   list.push(channel);
@@ -46,11 +55,11 @@ export class ChannelService {
 
   /**
    * @param {string} uid
-   * @param {string} chanLimit
-   * @param {string} chanSkip
+   * @param {number} chanLimit
+   * @param {number} chanSkip
    * @memberof ChannelService
    */
-  getList(uid: string, chanLimit: string, chanSkip: string): void {
+  getList(uid: string, chanLimit: number = 10, chanSkip: number = 0): void {
     this.webSocketService.getChannelList({
       uid,
       chanLimit,
@@ -59,12 +68,10 @@ export class ChannelService {
   }
 
   /**
-   * each item in channelList includes:
-   * {chid, ciid, name, creator, invitees, members, latestSpoke, lastGlimpse}
-   * @param {Array<any>} channelList
+   * @param {Array<Channel>} channelList
    * @memberof ChannelService
    */
-  subscribeList(channelList: Array<any>): void {
+  subscribeList(channelList: Array<Channel>): void {
     // don't push duplicated channelInfo
     channelList.forEach(channel => {
       this.appendChannel(channel);
@@ -84,10 +91,10 @@ export class ChannelService {
   }
 
   /**
-   * @param {*:{chid, ciid, name, creator, invitees, members, latestSpoke, lastGlimpse}} channelInfo
+   * @param {Channel} channelInfo
    * @memberof ChannelService
    */
-  subscribeCreated(channelInfo: any): void {
+  subscribeCreated(channelInfo: Channel): void {
     this.appendChannel(channelInfo);
   }
 
@@ -106,10 +113,10 @@ export class ChannelService {
   }
 
   /**
-   * @param {*:{chid, ciid, name, creator, invitees, members, latestSpoke, lastGlimpse}} channelInfo
+   * @param {Channel} channelInfo
    * @memberof ChannelService
    */
-  subscribeJoined(channelInfo: any): void {
+  subscribeJoined(channelInfo: Channel): void {
     this.appendChannel(channelInfo);
   }
 
@@ -136,15 +143,17 @@ export class ChannelService {
   }
 
   /**
+   * PS. don't push duplicated channelInfo
    * @private
-   * @param {*:{chid, ciid, name, creator, invitees, members, latestSpoke, lastGlimpse}} channel
+   * @param {Channel} channel
    * @memberof ChannelService
    */
-  private appendChannel(channel: any): void {
+  private appendChannel(channel: Channel): void {
     if ( ! this.mapping.has(channel.chid)) {
       this.mapping.set(channel.chid, channel);
       this.list.push(channel);
     }
+    console.log(`channel list updated: ${JSON.stringify(this.list, null, 2)}`)
   }
 
   /**

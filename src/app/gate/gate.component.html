@@ -80,8 +80,8 @@
 
     <div class="col-md-6 gedf-main">
       <app-user *ngIf="featureSelecter === 'user'"></app-user>
-      <app-friends *ngIf="featureSelecter === 'friends'"></app-friends>
-      <app-channels *ngIf="featureSelecter === 'channels'" [channelInfoID]='currentChannel'></app-channels>
+      <app-friends *ngIf="featureSelecter === 'friend'"></app-friends>
+      <app-channels *ngIf="featureSelecter === 'channel'" [(currentChannel)]='currentChannel'></app-channels>
       <app-setting *ngIf="featureSelecter === 'setting'"></app-setting>
     </div>
 

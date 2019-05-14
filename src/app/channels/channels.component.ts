@@ -5,8 +5,9 @@ import {
   OnChanges,
   SimpleChange
 } from '@angular/core';
-import { ChannelService } from '../business-services/channel.service';
-import { ConversationService } from '../business-services/conversation.service';
+import { ChannelService } from '../business/channel/channel.service';
+import { Channel } from '../business/channel/channel';
+import { ConversationService } from '../business/channel/conversation/conversation.service';
 
 @Component({
   selector: 'app-channels',
@@ -15,8 +16,18 @@ import { ConversationService } from '../business-services/conversation.service';
 })
 export class ChannelsComponent implements OnInit, OnChanges {
   @Input()
-  channelInfoID: string = '';
-  chList: Array<any> = [];
+  currentChannel: Channel = {
+    chid: '',
+    ciid: '',
+    name: '',
+    creator: '',
+    invitees: [],
+    members: [],
+    latestSpoke: new Date(),
+    lastGlimpse: new Date()
+  };
+
+  chList: Array<Channel> = [];
   currentChannelConv: Array<any> = [];
   saying: string = '';
   constructor(
@@ -25,18 +36,16 @@ export class ChannelsComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnInit() {
-    if (this.channelInfoID === '') {
-      // find the latest channel in the feature
-      return;
-    }
     this.chList = this.channelService.showList();
+    // this.currentChannel = this.chList.indexOf(0);
+    console.log(`this.currentChannel: ${JSON.stringify(this.currentChannel), null, 2}`);
   }
 
   ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
     console.log(`changes: ${JSON.stringify(changes, null, 2)}`);
 
     for (let propName in changes) {
-      if (propName === 'channelInfoID') {
+      if (propName === 'currentChannel') {
         let changedProp = changes[propName];
         this.getHistory(changedProp.currentValue);
       }
@@ -54,17 +63,16 @@ export class ChannelsComponent implements OnInit, OnChanges {
       return;
     }
 
-    let channelInfoID = this.channelInfoID;
     this.conversationService.send({
-      chid: channelInfoID,
-      ciid: '',
-      sender: '345b1c4c-128c-4286-8431-78d16d285f38',
+      // chid: this.currentChannel.chid,
+      // ciid: this.currentChannel.ciid,
+      sender: localStorage.getItem('uid'),
       content: content,
       type: 'text',
       datetime: Date.now()
     });
 
-    // this.getHistory(this.channelInfoID);
     this.saying = '';
+    // this.getHistory(this.currentChannel);
   }
 }

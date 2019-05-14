@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { WebSocketService } from './web-socket.service';
-import { EVENTS } from '../app-settings/conversation/events';
+import { WebSocketService } from '../socket/web-socket.service';
+import { EVENTS } from '../../app-settings/conversation/events';
 
 @Injectable({
   providedIn: 'root'

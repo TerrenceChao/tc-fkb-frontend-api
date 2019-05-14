@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 
-import { AuthService } from '../business-services/auth.service';
-import { UserService } from '../business-services/user.service';
-import { FriendService } from '../business-services/friend.service';
-import { ChannelService } from '../business-services/channel.service';
+import { AuthService } from '../business/auth/auth.service';
+import { UserService } from '../business/user/user.service';
+import { FriendService } from '../business/friend/friend.service';
+import { ChannelService } from '../business/channel/channel.service';
+import { FEATURES } from './feature';
 
 @Component({
   selector: 'app-gate',
@@ -11,10 +12,10 @@ import { ChannelService } from '../business-services/channel.service';
   styleUrls: ['./gate.component.css']
 })
 export class GateComponent implements OnInit {
-  featureSelecter: string = 'user';
+  featureSelecter: string = FEATURES.USER;
 
-  friendList: Array<any> = [];
-  channelList: Array<any> = [];
+  friendList: Map<string, any> = new Map();
+  channelList:  Map<string, any> = new Map();
   currentChannel: string = '';
 
   constructor(
@@ -32,21 +33,20 @@ export class GateComponent implements OnInit {
     this.featureSelecter = feature;
 
     switch (feature) {
-      case 'user':
+      case FEATURES.USER:
         break;
-      case 'friends':
+      case FEATURES.FRIEND:
         break;
-      case 'channels':
+      case FEATURES.CHANNEL:
         this.getChannelList();
         break;
-      case 'setting':
+      case FEATURES.SETTING:
         break;
     }
   }
 
   getChannelList(): void {
-    this.channelService
-      .getList()
-      .subscribe(chList => (this.channelList = chList));
+    // let uid = localStorage.getItem('uid');
+    // this.channelService.getList(uid);
   }
 }

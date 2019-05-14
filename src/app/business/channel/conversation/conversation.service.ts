@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 
-import { WebSocketService } from './web-socket.service';
+import { WebSocketService } from '../../socket/web-socket.service';
+import { Conversation } from './Conversation';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConversationService {
   private webSocketService: WebSocketService;
-  private recordMap: Map<string, any> = new Map();
+  private recordMap: Map<string, Array<Conversation>> = new Map();
   constructor() {}
 
   /**
@@ -21,10 +22,10 @@ export class ConversationService {
 
   /**
    * @param {string} ciid
-   * @returns {Array<any>}
+   * @returns {Array<Conversation>}
    * @memberof ConversationService
    */
-  showList(ciid: string): Array<any> {
+  showList(ciid: string): Array<Conversation> {
     return this.recordMap.has(ciid) ?
       this.recordMap.get(ciid).sort(this.sortByDatetime) : [];
   }
@@ -33,15 +34,15 @@ export class ConversationService {
    * @private
    * @param {*} a
    * @param {*} b
-   * @returns {Number}
+   * @returns {number}
    * @memberof ConversationService
    */
-  private sortByDatetime(a: any, b: any): Number {
+  private sortByDatetime(a: Conversation, b: Conversation): number {
     return a.datetime < b.datetime ? 1 : -1;
   }
 
   /**
-   * @param {*:{chid, ciid, sender, content, type, datetime}} reqPacket
+   * @param {any} reqPacket
    * @memberof ConversationService
    */
   send(reqPacket: any): void {
@@ -49,20 +50,28 @@ export class ConversationService {
   }
 
   /**
-   * @param {*:{chid, ciid, sender, content, type, datetime}} resPacket
+   * @param {Conversation} resPacket
    * @memberof ConversationService
    */
-  receive(resPacket: any): void {
+  receive(resPacket: Conversation): void {
     this.appendOneRecord(resPacket.ciid, resPacket);
+  }
+
+  /**
+   * @param {string} ciid
+   * @memberof ConversationService
+   */
+  remove(ciid: string):void {
+    this.recordMap.delete(ciid);
   }
 
   /**
    * @private
    * @param {string} ciid
-   * @param {*:{chid, ciid, sender, content, type, datetime}} record
+   * @param {Conversation} record
    * @memberof ConversationService
    */
-  private appendOneRecord(ciid: string, record: any): void {
+  private appendOneRecord(ciid: string, record: Conversation): void {
     if ( ! this.recordMap.has(ciid)) {
       this.recordMap.set(ciid, []);
     }
@@ -89,7 +98,7 @@ export class ConversationService {
   /**
    * @private
    * @param {string} ciid
-   * @param {Array<any>} records
+   * @param {Array<Conversation>} records
    * @memberof ConversationService
    */
   private appendRecords(ciid: string, records: Array<any>): void {
@@ -98,5 +107,6 @@ export class ConversationService {
     }
 
     this.recordMap.get(ciid).concat(records);
+    console.log(`conversation records updated: ${JSON.stringify(records, null, 2)}`)
   }
 }

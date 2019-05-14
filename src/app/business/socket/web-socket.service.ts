@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import * as socketIo from 'socket.io-client';
 import * as _ from 'lodash';
 
-import { InvitationService } from './invitation.service';
-import { ChannelService } from './channel.service';
-import { ConversationService } from './conversation.service';
-import { CONFIG } from '../app-settings/conversation/config';
-import { EVENTS } from '../app-settings/conversation/events';
+import { InvitationService } from '../invitation/invitation.service';
+import { ChannelService } from '../channel/channel.service';
+import { ConversationService } from '../channel/conversation/conversation.service';
+import { CONFIG } from '../../app-settings/conversation/config';
+import { EVENTS } from '../../app-settings/conversation/events';
 
 @Injectable({
   providedIn: 'root'
@@ -50,20 +50,18 @@ export class WebSocketService {
   login(): WebSocketService {
     // use sessionId & msgToken to check if a user is authenticated.
     this.socket.emit(EVENTS.REQUEST.LOGIN, {
-      msgToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnR1c2VyYWdlbnQiOiJNb3ppbGxhLzUuMCAoWDExOyBMaW51eCB4ODZfNjQpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS83My4wLjM2ODMuNzUgU2FmYXJpLzUzNy4zNiIsInVpZCI6IjM0NWIxYzRjLTEyOGMtNDI4Ni04NDMxLTc4ZDE2ZDI4NWYzOCIsImlhdCI6MTU1NzY3MDA0MiwiZXhwIjoxNTU3NzU2NDQyfQ.bbBRaI-6WvMHWOZgiI8lz9lOZftkD3SwXvqyzTScrx0',
+      msgToken: localStorage.getItem('msgToken'),
+      sessionId: localStorage.getItem('sessionId'),
+      uid: localStorage.getItem('uid'),
+      nickname: localStorage.getItem('nickname'),
+      clientuseragent: localStorage.getItem('clientuseragent'),
 
-
-      sessionId: 'session id',
-      uid: '345b1c4c-128c-4286-8431-78d16d285f38',
-      nickname: 'Alice',
-      clientuseragent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.75 Safari/537.36',
-
-      inviLimit: 10,
-      inviSkip: 0,
-      chanLimit: 10,
-      chanSkip: 0,
-      convLimit: 10,
-      convSkip: 0
+      inviLimit: Number(localStorage.getItem('inviLimit')),
+      inviSkip: Number(localStorage.getItem('inviSkip')),
+      chanLimit: Number(localStorage.getItem('chanLimit')),
+      chanSkip: Number(localStorage.getItem('chanSkip')),
+      convLimit: Number(localStorage.getItem('convLimit')),
+      convSkip: Number(localStorage.getItem('convSkip'))
     });
     return this;
   }
@@ -219,7 +217,11 @@ export class WebSocketService {
   subscribeChannelList(): WebSocketService {
     this.socket.on(
       EVENTS.RESPONSE.CHANNEL_LIST,
-      channelList => {
+      packet => {
+        let msgCode = packet.msgCode;
+        let channelList = packet.data;
+        console.log(`msgCode: ${msgCode}`);
+
         channelList.forEach(channel => {
           if (channel.conversations != null) {
             this.conversationService.subscribeList({
