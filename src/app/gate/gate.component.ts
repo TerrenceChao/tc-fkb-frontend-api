@@ -4,6 +4,7 @@ import { AuthService } from '../business/auth/auth.service';
 import { UserService } from '../business/user/user.service';
 import { FriendService } from '../business/friend/friend.service';
 import { ChannelService } from '../business/channel/channel.service';
+import { Channel } from '../business/channel/channel';
 import { FEATURES } from './feature';
 
 @Component({
@@ -15,8 +16,8 @@ export class GateComponent implements OnInit {
   featureSelecter: string = FEATURES.USER;
 
   friendList: Map<string, any> = new Map();
-  channelList:  Map<string, any> = new Map();
-  currentChannel: string = '';
+  channelList:  Array<Channel> = new Array();
+  currentChannel: Channel;
 
   constructor(
     private authService: AuthService,
@@ -46,7 +47,7 @@ export class GateComponent implements OnInit {
   }
 
   getChannelList(): void {
-    // let uid = localStorage.getItem('uid');
-    // this.channelService.getList(uid);
+    let uid = localStorage.getItem('uid');
+    this.channelService.getList(uid);
   }
 }

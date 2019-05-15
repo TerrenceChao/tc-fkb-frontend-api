@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 
 import { WebSocketService } from '../../socket/web-socket.service';
-import { Conversation } from './Conversation';
+import { Conversation } from './conversation';
 
 @Injectable({
   providedIn: 'root'
@@ -42,10 +42,10 @@ export class ConversationService {
   }
 
   /**
-   * @param {any} reqPacket
+   * @param {Conversation} reqPacket
    * @memberof ConversationService
    */
-  send(reqPacket: any): void {
+  send(reqPacket: Conversation): void {
     this.webSocketService.sendConversation(reqPacket);
   }
 
@@ -101,7 +101,7 @@ export class ConversationService {
    * @param {Array<Conversation>} records
    * @memberof ConversationService
    */
-  private appendRecords(ciid: string, records: Array<any>): void {
+  private appendRecords(ciid: string, records: Array<Conversation>): void {
     if ( ! this.recordMap.has(ciid)) {
       this.recordMap.set(ciid, []);
     }

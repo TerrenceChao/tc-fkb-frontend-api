@@ -7,6 +7,8 @@ import {
 } from '@angular/core';
 import { ChannelService } from '../business/channel/channel.service';
 import { Channel } from '../business/channel/channel';
+import { Conversation } from '../business/channel/conversation/conversation';
+import { User } from '../business/user/user';
 import { ConversationService } from '../business/channel/conversation/conversation.service';
 
 @Component({
@@ -26,10 +28,17 @@ export class ChannelsComponent implements OnInit, OnChanges {
     latestSpoke: new Date(),
     lastGlimpse: new Date()
   };
-
   chList: Array<Channel> = [];
-  currentChannelConv: Array<any> = [];
-  saying: string = '';
+
+  currentConversationList: Array<Conversation> = [];
+  scrip = '';
+  convType = 'text';
+
+  user: User = new User(
+    localStorage.getItem('uid'),
+    'Alice'
+  );
+
   constructor(
     private channelService: ChannelService,
     private conversationService: ConversationService
@@ -37,8 +46,11 @@ export class ChannelsComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.chList = this.channelService.showList();
-    // this.currentChannel = this.chList.indexOf(0);
+    this.currentChannel = this.chList[0];
     console.log(`this.currentChannel: ${JSON.stringify(this.currentChannel), null, 2}`);
+
+    this.currentConversationList = this.conversationService.showList(this.currentChannel.ciid);
+    console.log(`this.currentConversationList: ${JSON.stringify(this.currentConversationList), null, 2}`);
   }
 
   ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
@@ -55,24 +67,21 @@ export class ChannelsComponent implements OnInit, OnChanges {
   private getHistory(ciid: string): void {
     this.conversationService
       // .getHistory(ciid)
-      // .subscribe(conversations => (this.currentChannelConv = conversations));
+      // .subscribe(conversations => (this.currentConversationList = conversations));
   }
 
   sendConversation(content: any) {
-    if (this.saying === '') {
+    if (!this.scrip.trim()) {
       return;
     }
 
-    this.conversationService.send({
-      // chid: this.currentChannel.chid,
-      // ciid: this.currentChannel.ciid,
-      sender: localStorage.getItem('uid'),
-      content: content,
-      type: 'text',
-      datetime: Date.now()
-    });
+    this.conversationService.send(new Conversation(
+      this.currentChannel.ciid,
+      this.user.uid,
+      content,
+      this.convType
+    ));
 
-    this.saying = '';
-    // this.getHistory(this.currentChannel);
+    this.scrip = '';
   }
 }
