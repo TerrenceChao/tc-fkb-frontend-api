@@ -14,10 +14,23 @@ import { FEATURES } from './feature';
 })
 export class GateComponent implements OnInit {
   featureSelecter: string = FEATURES.USER;
-
+  currentChannel: Channel = {
+    chid: '5cd06b8462f49f4bdfc007ca',
+    ciid: 'c220ed87-a67d-4d74-8403-3f79b1088bf2',
+    name: 'Room 18',
+    creator: '345b1c4c-128c-4286-8431-78d16d285f38',
+    invitees: [
+      '6d23430a-ccef-47b7-b1eb-2cf70e6bd9ca',
+      'c32f7185-31aa-40c3-b0a2-d0b68b35c783'
+    ],
+    members: [
+      '345b1c4c-128c-4286-8431-78d16d285f38'
+    ],
+    latestSpoke: new Date('2019-05-12T10:45:22.234Z'),
+    lastGlimpse: new Date('2019-05-06T17:14:44.925Z')
+  };
   friendList: Map<string, any> = new Map();
-  channelList:  Array<Channel> = new Array();
-  currentChannel: Channel;
+  channelList:  Channel[] = [this.currentChannel];
 
   constructor(
     private authService: AuthService,
