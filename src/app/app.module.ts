@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { GateComponent } from './gate/gate.component';
 import { UserComponent } from './user/user.component';
 import { FriendsComponent } from './friends/friends.component';
-import { ChannelsComponent } from './channels/channels.component';
+// import { ChannelsComponent } from './channels/channels.component';
 import { SettingComponent } from './setting/setting.component';
 
 import { AppBootstrapModule } from './app-bootstrap/app-bootstrap.module';
@@ -19,7 +19,7 @@ import { ChannelsModule } from './channels/channels.module';
     GateComponent,
     UserComponent,
     FriendsComponent,
-    ChannelsComponent,
+    // ChannelsComponent,
     SettingComponent
   ],
   imports: [
