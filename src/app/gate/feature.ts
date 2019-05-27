@@ -1,6 +1,6 @@
 export const FEATURES = {
   USER: 'user',
-  FRIEND: 'friend',
-  CHANNEL: 'channel',
+  FRIENDS: 'friends',
+  CHANNELS: 'channels',
   SETTING: 'setting'
 };

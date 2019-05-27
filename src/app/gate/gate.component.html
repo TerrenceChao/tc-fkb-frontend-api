@@ -40,21 +40,21 @@
         <ul class="list-group list-group-flush">
           <li class="list-group-item">
             <div class="h8 text-muted">
-              <a (click)="selectFeature('user')">User</a>
+                <a [routerLink]="'/user'">User</a>
             </div>
           </li>
           <li class="list-group-item">
             <div class="h8 text-muted">
-              <a (click)="selectFeature('friends')">Friends</a>
+                <a [routerLink]="'/friends'">Friends</a>
             </div>
           </li>
           <li class="list-group-item">
             <div class="h8 text-muted">
               <img id="directory" src="assets/img/dir.svg" class="icon">&nbsp;
-              <a (click)="selectFeature('channels')">Channels</a>
+              <a [routerLink]="'/channels'">Channels</a>
             </div>
 
-            <div *ngIf="featureSelecter === 'channels'">
+            <!-- <div *ngIf="featureSelecter === 'channels'"> -->
               <div class="list-group-item">
                 Create New (+)
               </div>
@@ -70,9 +70,14 @@
                   </li>
                 </ul>
               </div>
-            </div>
+            <!-- </div> -->
 
           </li>
+          <li class="list-group-item">
+              <div class="h8 text-muted">
+                  <a [routerLink]="'/setting'">Setting</a>
+              </div>
+            </li>
         </ul>
 
       </div>
@@ -83,7 +88,8 @@
       <app-friends *ngIf="featureSelecter === 'friend'"></app-friends>
       <app-channels *ngIf="featureSelecter === 'channel'" [(currentChannel)]='currentChannel'></app-channels>
       <app-setting *ngIf="featureSelecter === 'setting'"></app-setting> -->
-      <router-outlet></router-outlet>
+      <router-outlet>
+      </router-outlet>
     </div>
 
 

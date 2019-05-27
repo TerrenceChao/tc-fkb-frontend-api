@@ -4,16 +4,31 @@ import { UserComponent } from './user/user.component';
 import { FriendsComponent } from './friends/friends.component';
 import { ChannelsComponent } from './channels/channels.component';
 import { SettingComponent } from './setting/setting.component';
+import { FEATURES } from './gate/feature';
 
 const routes: Routes = [
-  { path: 'user', component: UserComponent },
-  { path: 'friends', component: FriendsComponent },
-  { path: 'channels', component: ChannelsComponent },
-  { path: 'setting', component: SettingComponent }
+  {
+    path: FEATURES.USER,
+    component: UserComponent
+  },
+  {
+    path: FEATURES.FRIENDS,
+    component: FriendsComponent
+  },
+  {
+    path: FEATURES.CHANNELS,
+    component: ChannelsComponent
+  },
+  {
+    path: FEATURES.SETTING,
+    component: SettingComponent
+  }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, {
+    enableTracing: true
+  })],
   exports: [RouterModule],
   declarations: []
 })

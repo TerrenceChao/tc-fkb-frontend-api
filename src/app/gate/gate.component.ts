@@ -49,9 +49,9 @@ export class GateComponent implements OnInit {
     switch (feature) {
       case FEATURES.USER:
         break;
-      case FEATURES.FRIEND:
+      case FEATURES.FRIENDS:
         break;
-      case FEATURES.CHANNEL:
+      case FEATURES.CHANNELS:
         this.getChannelList();
         break;
       case FEATURES.SETTING:
